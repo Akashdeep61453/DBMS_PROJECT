@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    margin: 0;
+    padding: 20px;
+}
+
+/* MAIN TITLE */
+h1 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+/* ALL SECTIONS */
+h3 {
+    margin-top: 20px;
+    color: #222;
+}
+
+/* INPUT BOXES */
+input {
+    width: 250px;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #007bff;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    background: #0b7ee3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #007bff;
+}
+.divider {
+    width: 30%;
+    max-width: 180px;
+    height: 2px;
+    margin: 25px auto;
+    background: linear-gradient(to right, transparent, #666, transparent);
+}
+#studentList,
+#allocations,
+#complaints {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+p {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+p button {
+    background: red;
+    margin-left: 10px;
+}
+
+p button:hover {
+    background: darkred;
+}

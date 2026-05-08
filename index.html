@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hostel System</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+<h1>Hostel Management System</h1>
+
+<h3>Add Student</h3>
+<input id="name" placeholder="Name">
+<input id="course" placeholder="Course">
+<input id="contact" placeholder="Contact">
+<input id="age" placeholder="Age">
+<button onclick="addStudent()">Add</button>
+
+<div class="divider"></div>
+
+<h3>Allocate / Deallocate Room</h3>
+<input id="studentId" placeholder="Student ID">
+<input id="roomId" placeholder="Room ID">
+<button onclick="allocateRoom()">Allocate</button>
+<button onclick="deallocateRoom()">Deallocate</button>
+
+<div class="divider"></div>
+
+<h3>Rooms Status</h3>
+<button onclick="loadRooms()">Load Rooms</button>
+<div id="rooms"></div>
+
+<div class="divider"></div>
+
+<h3>Complaint</h3>
+<input id="c_id" placeholder="Student ID">
+<input id="c_desc" placeholder="Write Complaint">
+<button onclick="addComplaint()">Submit</button>
+
+<div class="divider"></div>
+
+<h3>Load Students</h3>
+<button onclick="loadStudents()">Load</button>
+<div id="studentList"></div>
+
+<div class="divider"></div>
+
+<h3>Load Allocations</h3>
+<button onclick="loadAllocations()">Load Allocations</button>
+<div id="allocations"></div>
+
+<div class="divider"></div>
+
+<h3>Complaints</h3>
+<button onclick="loadComplaints()">Load Complaints</button>
+<div id="complaints"></div>
+<script>
+
+// ---------------- ADD STUDENT ----------------
+async function addStudent(){
+    await fetch("http://localhost:3000/student",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            name:document.getElementById("name").value,
+            course:document.getElementById("course").value,
+            contact:document.getElementById("contact").value,
+            age:document.getElementById("age").value
+        })
+    });
+
+    loadStudents();
+}
+
+
+// ---------------- LOAD STUDENTS ----------------
+async function loadStudents(){
+    const res = await fetch("http://localhost:3000/students");
+    const data = await res.json();
+
+    let html = "";
+
+    data.forEach(r=>{
+        html += `<p>${r.STUDENT_ID} | ${r.NAME} | ${r.COURSE} | ${r.CONTACT} | Age: ${r.AGE}</p>`;
+    });
+
+    document.getElementById("studentList").innerHTML = html;
+}
+
+
+// ---------------- ALLOCATE ROOM ----------------
+async function allocateRoom(){
+    await fetch("http://localhost:3000/allocate",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            student_id:document.getElementById("studentId").value,
+            room_id:document.getElementById("roomId").value
+        })
+    });
+
+    loadAllocations();
+    loadRooms();
+}
+
+
+// ---------------- DEALLOCATE ROOM ----------------
+async function deallocateRoom(){
+    await fetch("http://localhost:3000/deallocate",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            student_id:document.getElementById("studentId").value
+        })
+    });
+
+    loadAllocations();
+    loadRooms();
+}
+
+
+// ---------------- LOAD ROOMS ----------------
+async function loadRooms(){
+    const res = await fetch("http://localhost:3000/rooms");
+    const data = await res.json();
+
+    let html = "";
+
+    data.forEach(r=>{
+        html += `<p>Room: ${r.ROOM_ID} | Capacity: ${r.CAPACITY} | Occupied: ${r.OCCUPIED} | <b>${r.STATUS}</b></p>`;
+    });
+
+    document.getElementById("rooms").innerHTML = html;
+}
+
+
+// ---------------- ADD COMPLAINT ----------------
+async function addComplaint(){
+    await fetch("http://localhost:3000/complaint",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            student_id:document.getElementById("c_id").value,
+            description:document.getElementById("c_desc").value
+        })
+    });
+
+    loadComplaints();
+}
+
+
+// ---------------- LOAD COMPLAINTS ----------------
+async function loadComplaints(){
+    const res = await fetch("http://localhost:3000/complaints");
+    const data = await res.json();
+
+    let html = "";
+
+    data.forEach(r=>{
+        html += `
+            <p>
+                ${r.COMPLAINT_ID} | ${r.NAME} | ${r.DESCRIPTION} | 
+                <b>${r.STATUS}</b>
+
+                ${r.STATUS !== "RESOLVED" 
+                    ? `<button onclick="resolveComplaint(${r.COMPLAINT_ID})">
+                        Resolve
+                       </button>` 
+                    : ""
+                }
+            </p>
+        `;
+    });
+
+    document.getElementById("complaints").innerHTML = html;
+}
+// ---------------- LOAD ALLOCATIONS ----------------
+async function loadAllocations(){
+    const res = await fetch("http://localhost:3000/allocations");
+    const data = await res.json();
+
+    let html = data.map(r =>
+        `<p>${r.ALLOC_ID} | ${r.NAME} | Room: ${r.ROOM_ID}</p>`
+    ).join("");
+
+    document.getElementById("allocations").innerHTML = html;
+}
+async function resolveComplaint(id){
+    await fetch(`http://localhost:3000/complaint/${id}`,{
+        method:"PUT"
+    });
+
+    loadComplaints();
+}
+
+</script>
+</body>
+</html>
